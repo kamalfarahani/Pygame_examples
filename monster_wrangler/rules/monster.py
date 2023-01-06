@@ -75,7 +75,8 @@ class MonsterCollideRule(GameRule):
             monsters=new_monsters,
             round=new_round,
             player=game_state.player._replace(
-                y=constants.WINDOW_HEIGHT - 20
+                y=constants.WINDOW_HEIGHT - 20,
+                warps=game_state.player.warps + 1
             )
         )
     

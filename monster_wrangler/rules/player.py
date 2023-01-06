@@ -1,4 +1,5 @@
 import pygame
+import constants
 
 from typing import List
 from rules import GameRule
@@ -6,11 +7,19 @@ from state.gamestate import GameState
 
 
 class PlayerMoveRule(GameRule):
-    def __init__(self, max_width: int, max_height: int) -> None:
+    def __init__(
+        self,
+        min_width: int, 
+        min_height: int, 
+        max_width: int, 
+        max_height: int, 
+        bottom_line: int) -> None:
+        
+        self.min_width = min_width
+        self.min_height = min_height
         self.max_width = max_width
         self.max_height = max_height
-        self.min_width = 0
-        self.min_height = 0
+        self.bottom_line = bottom_line
     
     def __call__(self, state: GameState, events: List[pygame.event.Event]) -> GameState:
         player = state.player
@@ -32,8 +41,9 @@ class PlayerMoveRule(GameRule):
             return 0, 0 
         
         dx, dy = get_dx_dy()
+        max_height = self.max_height if player.y > self.bottom_line else self.bottom_line
         new_x = player.x + dx if self.min_width < player.x + dx < self.max_width else player.x
-        new_y = player.y + dy if self.min_height < player.y + dy < self.max_height else player.y
+        new_y = player.y + dy if self.min_height < player.y + dy < max_height else player.y
 
         return state._replace(
             player=player._replace(
@@ -41,3 +51,22 @@ class PlayerMoveRule(GameRule):
                 y=new_y
             )
         )
+
+
+class WarpRule(GameRule):
+    def __init__(self, warp_sound: pygame.mixer.Sound) -> None:
+        self.warp_sound = warp_sound
+
+    def __call__(self, state: GameState, events: List[pygame.event.Event]) -> GameState:
+        if state.player.warps > 0:
+            for event in events:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.warp_sound.play()
+                    return state._replace(
+                        player=state.player._replace(
+                            y=constants.WINDOW_HEIGHT - 20,
+                            warps=state.player.warps - 1
+                        )
+                    )
+                
+        return state
