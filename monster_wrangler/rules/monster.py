@@ -74,6 +74,7 @@ class MonsterCollideRule(GameRule):
         return game_state._replace(
             monsters=new_monsters,
             round=new_round,
+            round_time=0,
             player=game_state.player._replace(
                 y=constants.WINDOW_HEIGHT - 20,
                 warps=game_state.player.warps + 1
@@ -96,12 +97,13 @@ class MonsterCollideRule(GameRule):
                 return self.next_level(state)
 
             new_catch_type = random.choice([m.color for m in new_monsters])
-            
+            added_score = max(10, 100*state.round - state.round_time)
+
             return state._replace(
                 monsters=new_monsters,
                 catch_type=new_catch_type,
                 player=state.player._replace(
-                    score=state.player.score + 1
+                    score=state.player.score + added_score
                 )
             )
         else:

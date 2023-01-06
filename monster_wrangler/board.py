@@ -19,6 +19,7 @@ class Board:
     def __init__(self) -> None:
         self.window_width = constants.WINDOW_WIDTH
         self.window_height = constants.WINDOW_HEIGHT
+        self.counter = 0
         
         self.setup_gamestate()
         self.events = []
@@ -86,6 +87,14 @@ class Board:
             new_state = rule(new_state, self.events)
         
         self.state = new_state
+        
+        self.counter = self.counter + 1
+        if self.counter % constants.FPS == 0:
+            self.counter = 0
+            self.state = self.state._replace(
+                round_time=self.state.round_time + 1 
+            )
+            
     
     def check_gameover(self) -> None:
         if self.state.player.lives > 0:
