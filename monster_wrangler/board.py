@@ -7,7 +7,7 @@ from state.gamestate import GameState
 from state.player import Player
 from state.monster import Monster, Color
 from render.renderer import Renderer, monsters_player_collide
-from rules.player import PlayerMoveRule
+from rules.player import PlayerMoveRule, WarpRule
 from rules.monster import MonstersMoverRule, MonsterCollideRule, create_random_monster
 
 
@@ -53,9 +53,13 @@ class Board:
     def setup_rules(self) -> None:
         self.rules = [
             PlayerMoveRule(
+                min_width=0,
+                min_height=constants.TOP_MARGIN,
                 max_width=self.window_width,
-                max_height=self.window_height
+                max_height=self.window_height,
+                bottom_line=self.window_height - constants.BOTTOM_MARGIN
             ),
+            WarpRule(warp_sound=self.warp_sound),
             MonstersMoverRule(
                 min_width=0,
                 min_height=constants.TOP_MARGIN,
@@ -110,9 +114,6 @@ class Board:
             self.update_game_state,
             self.check_gameover
         ]
-
-        # pygame.mixer.music.load(constants.BACKGROUND_MUSIC_PATH)
-        # pygame.mixer.music.play(-1, 0, 0)
         
         self.general_loop(actions, [])
     
