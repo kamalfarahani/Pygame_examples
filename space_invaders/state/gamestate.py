@@ -10,3 +10,4 @@ class GameState(NamedTuple):
     aliens_bullets: List[Bullet]
     aliens_velocity: int
     round: int
+    gameover: bool = False

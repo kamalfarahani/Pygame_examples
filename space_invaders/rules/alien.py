@@ -1,9 +1,11 @@
+import random
 import pygame
 import constants
 
 from typing import List, Tuple
 from rules import GameRule
 from state.gamestate import GameState
+from state.bullet import Bullet
 
 
 class AliensMoveRule(GameRule):
@@ -42,3 +44,22 @@ class AliensMoveRule(GameRule):
             return state._replace(
                 aliens=new_aliens
             )
+
+
+class AliensShootRule(GameRule):
+    def __init__(self, fire_sound: pygame.mixer.Sound) -> None:
+        self.fire_sound = fire_sound
+    
+    def __call__(self, state: GameState, events: List[pygame.event.Event]) -> GameState:
+        if len(state.aliens) == 0 or \
+            random.random() > min(0.5, state.round * constants.ALIEN_FIRE_PROBABILITY):
+            return state
+        
+        [alien] = random.sample(state.aliens, 1)
+        self.fire_sound.play()
+        bullet = Bullet(x=alien.x, y=alien.y)
+
+        return state._replace(
+            aliens_bullets=state.aliens_bullets + [bullet]
+        )
+

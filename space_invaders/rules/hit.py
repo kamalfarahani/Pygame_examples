@@ -45,3 +45,32 @@ class AlienHitRule(GameRule):
             ),
             aliens=new_aliens
         )
+
+
+class PlayerHitRule(GameRule):
+    def __init__(
+        self,
+        player_bullet_collide: Callable[[GameState], Optional[render.bullet.GreenBullet]],
+        alien_hit_sound: pygame.mixer.Sound
+    ) -> None:
+        self.player_bullet_collide = player_bullet_collide
+        self.alien_hit_sound = alien_hit_sound
+    
+
+    def __call__(self, state: GameState, events: List[pygame.event.Event]) -> GameState:
+        alien_bullet = self.player_bullet_collide(state)
+        if alien_bullet is None:
+            return state
+        
+        self.alien_hit_sound.play()
+        new_alien_bullets = list(filterfalse(
+            lambda bullet: bullet.x == alien_bullet.x and bullet.y == alien_bullet.y,
+            state.aliens_bullets
+        ))
+
+        return state._replace(
+            player=state.player._replace(
+                lives=state.player.lives - 1
+            ),
+            aliens_bullets=new_alien_bullets
+        )

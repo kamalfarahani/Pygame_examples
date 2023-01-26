@@ -1,5 +1,5 @@
 import pygame
-from typing import Callable, Tuple, List,Dict
+from typing import Callable, Tuple, List, Dict, Optional
 
 import constants
 from state.gamestate import GameState
@@ -9,6 +9,12 @@ from render.bullet import RedBullet, GreenBullet
 
 
 RenderFunc = Callable[[GameState], Tuple[pygame.Surface, pygame.Rect]]
+
+
+def player_bullet_collide(state: GameState) -> Optional[GreenBullet]:
+    aliens_bullets = pygame.sprite.Group(*[GreenBullet(x=b.x, y=b.y) for b in state.aliens_bullets])
+    player = Player(x=state.player.x, y=state.player.y)
+    return pygame.sprite.spritecollideany(player, aliens_bullets)
 
 
 def alien_bullet_collide(state: GameState) -> Dict[RedBullet, Alien]:

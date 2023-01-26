@@ -1,17 +1,15 @@
-import random
 import pygame
 from typing import Callable, List
 
 import constants
 from state.gamestate import GameState
 from state.player import Player
-from state.alien import Alien
-from render.renderer import Renderer, alien_bullet_collide
+from render.renderer import Renderer, alien_bullet_collide, player_bullet_collide
 from rules.player import PlayerMoveRule, PlayerShootRule
-from rules.bullet import PlayerBulletMoveRule
-from rules.alien import AliensMoveRule
-from rules.hit import AlienHitRule
-from utils import create_aliens
+from rules.bullet import PlayerBulletMoveRule, AlienBulletsMoveRule
+from rules.alien import AliensMoveRule, AliensShootRule
+from rules.hit import AlienHitRule, PlayerHitRule
+from rules.game import GameOverRule, NewRoundRule
 
 
 Action = Callable[[], None]
@@ -45,7 +43,7 @@ class Board:
                 velocity=constants.PLAYER_INIT_VELOCITY,
                 bullets=[]
             ),
-            aliens=create_aliens(),
+            aliens=[],
             aliens_bullets=[],
             aliens_velocity=constants.ALIENS_INIT_VELOCITY,
             round=0
@@ -59,15 +57,29 @@ class Board:
                 min_height=0,
                 max_height=self.window_height
             ),
+            PlayerHitRule(
+                player_bullet_collide=player_bullet_collide,
+                alien_hit_sound=self.alien_hit_sound
+            ),
             AliensMoveRule(
                 min_width=0,
                 max_width=self.window_width,
                 min_height=0,
                 max_height=self.window_height
             ),
+            AliensShootRule(self.alien_fire_sound),
+            AlienBulletsMoveRule(
+                min_height=0,
+                max_height=self.window_height
+            ),
             AlienHitRule(
                 alien_bullet_collide=alien_bullet_collide,
                 player_hit_sound=self.player_hit_sound
+            ),
+            NewRoundRule(self.new_round_sound),
+            GameOverRule(
+                max_height=self.window_height - constants.BOTTOM_MARGIN,
+                breach_sound=self.breach_sound
             )
         ]
     
@@ -88,7 +100,7 @@ class Board:
             
     
     def check_gameover(self) -> None:
-        if self.state.player.lives > 0:
+        if not self.state.gameover:
             return
         
         actions = [

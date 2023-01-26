@@ -29,3 +29,24 @@ class PlayerBulletMoveRule(GameRule):
                 bullets=new_bullets
             )
         )
+
+class AlienBulletsMoveRule(GameRule):
+    def __init__(self, min_height: int, max_height: int) -> None:
+        self.min_height = min_height
+        self.max_height = max_height
+    
+
+    def __call__(self, state: GameState, events: List[pygame.event.Event]) -> GameState:
+        bullets = state.aliens_bullets
+
+        new_bullets = list(filter(
+            lambda bullet: self.min_height < bullet.y < self.max_height,
+            map(
+                lambda bullet: bullet._replace(y=bullet.y + constants.ALIEN_BULLET_VELOCITY),
+                bullets
+            )
+        ))
+
+        return state._replace(
+            aliens_bullets=new_bullets
+        )
