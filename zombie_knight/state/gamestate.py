@@ -4,6 +4,7 @@ from state.player import Player
 from state.zombie import Zombie
 from state.tilemap import TileMap
 from state.rubymaker import RubyMaker
+from state.portal import BasePortal
 
 
 class GameState(NamedTuple):
@@ -11,4 +12,5 @@ class GameState(NamedTuple):
     ruby_maker: RubyMaker
     #zombies: List[Zombie]
     tile_map: TileMap
+    portals: List[BasePortal]
     gameover: bool = False

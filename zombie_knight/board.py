@@ -6,8 +6,10 @@ import state.tilemap
 from state.gamestate import GameState
 from state.player import Player
 from state.rubymaker import RubyMaker
+from state.portal import GreenPortal, PurplePortal, BasePortal
 from render.renderer import Renderer
 from rules.rubymaker import RubyMakerAnimateRule
+from rules.portal import PortalsAnimateRule
 
 
 Action = Callable[[], None]
@@ -32,6 +34,25 @@ def generate_tile_map(int_map: List[List[int]]) -> state.tilemap.TileMap:
 
     return tile_map
 
+def generate_portals() -> List[BasePortal]:
+    green_portal = GreenPortal(
+        x=30,
+        y=40,
+        animation_index=3,
+        out_portal=None
+    )
+
+    purple_portal = PurplePortal(
+        x=100,
+        y=570,
+        animation_index=0,
+        out_portal=green_portal
+    )
+
+    green_portal.out_portal = purple_portal
+
+
+    return [green_portal, purple_portal]
 
 class Board:
     def __init__(self) -> None:
@@ -59,12 +80,14 @@ class Board:
                 x=constants.WINDOW_WIDTH // 2,
                 y=constants.RUBY_MAKER_TOP_MARGIN,
                 animation_index=0
-            )
+            ),
+            portals=generate_portals()
         )
 
     def setup_rules(self) -> None:
         self.rules = [
-            RubyMakerAnimateRule()
+            RubyMakerAnimateRule(),
+            PortalsAnimateRule()
         ]
     
     def setup_sounds(self) -> None:

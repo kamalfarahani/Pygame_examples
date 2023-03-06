@@ -4,8 +4,11 @@ from typing import Callable, Tuple, List, Dict, Optional
 import constants
 import render.tile
 import state.tilemap
+import state.portal
+import render.portal
 from state.gamestate import GameState
 from render.rubymaker import RubyMaker
+from render.portal import GreenPortal
 
 
 RenderFunc = Callable[[GameState], Tuple[pygame.Surface, pygame.Rect]]
@@ -17,6 +20,11 @@ state_tile_to_render_tile = {
     state.tilemap.TileThree: render.tile.TileThree,
     state.tilemap.TileFour: render.tile.TileFour,
     state.tilemap.TileFive: render.tile.TileFive
+}
+
+state_portal_to_render_portal = {
+    state.portal.GreenPortal: render.portal.GreenPortal,
+    state.portal.PurplePortal: render.portal.PurplePortal
 }
 
 
@@ -39,6 +47,16 @@ class Renderer:
         
         return (ruby_maker_sprite.image, ruby_maker_sprite.rect)
     
+    def render_portals(self, display: pygame.Surface, state: GameState) -> None:
+        portals = state.portals
+        portal_sprites = [
+            state_portal_to_render_portal[type(portal)](portal)
+            for portal in portals
+        ]
+        
+        portals_group = pygame.sprite.Group(*portal_sprites)
+        portals_group.draw(display)
+
     def render_tile_map(self, display: pygame.Surface, state: GameState) -> None:
         tile_map = state.tile_map
         tile_sprites = [
@@ -53,6 +71,7 @@ class Renderer:
     def render(self, display: pygame.Surface, state: GameState) -> None:
         display.blit(self.background_img, self.background_rect)
         self.render_tile_map(display, state)
+        self.render_portals(display, state)
         self.blit(display, state)
     
     def blit(self, display: pygame.Surface, state: GameState) -> None:

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 736
 
@@ -25,13 +27,17 @@ TILE_SIZE = 32
 RUBY_MAKER_TOP_MARGIN = 40
 RUBY_SIZE = 64
 RUBY_ANIMATION_IMAGES_PATHS = [
-    './assets/images/ruby/tile000.png',
-    './assets/images/ruby/tile001.png',
-    './assets/images/ruby/tile002.png',
-    './assets/images/ruby/tile003.png',
-    './assets/images/ruby/tile004.png',
-    './assets/images/ruby/tile005.png',
-    './assets/images/ruby/tile006.png'
+    p for p in Path('./assets/images/ruby/').iterdir()
+]
+
+PORTAL_SIZE = 72
+
+GREEN_PORTAL_ANIMATION_IMAGES_PATHS = [
+    p for p in Path('./assets/images/portals/green').iterdir()
+]
+
+PURPLE_PORTAL_ANIMATION_IMAGES_PATHS = [
+    p for p in Path('./assets/images/portals/purple').iterdir()
 ]
 
 INIT_PLAYER_LIVES = 3

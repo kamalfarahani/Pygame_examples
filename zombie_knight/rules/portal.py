@@ -6,11 +6,12 @@ from state.gamestate import GameState
 from rules.animate import Animate
 
 
-class RubyMakerAnimateRule(GameRule):
+class PortalsAnimateRule(GameRule):
     def __init__(self) -> None:
-        self.animate = Animate(len(constants.RUBY_ANIMATION_IMAGES_PATHS))
+        self.animate = Animate(len(constants.GREEN_PORTAL_ANIMATION_IMAGES_PATHS))
     
     def __call__(self, state: GameState, events: List[pygame.event.Event]) -> GameState:
+        portals = state.portals
         return state._replace(
-            ruby_maker=self.animate(state.ruby_maker)
+            portals=[self.animate(portal) for portal in portals]
         )
