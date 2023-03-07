@@ -1,16 +1,19 @@
 import pygame
 import constants
 import state.rubymaker
+from render.animatable import Animatable
 
 
-class RubyMaker(pygame.sprite.Sprite):
-    def __init__(self, ruby_maker: state.rubymaker.RubyMaker) -> None:
-        super().__init__()
-        img_path = constants.RUBY_ANIMATION_IMAGES_PATHS[ruby_maker.animation_index]
-        self.image = pygame.transform.scale(
-            pygame.image.load(img_path),
-            (constants.RUBY_SIZE, constants.RUBY_SIZE)
-        )
+ruby_animation_images = [
+    pygame.transform.scale(
+        pygame.image.load(path),
+        (constants.RUBY_SIZE, constants.RUBY_SIZE)
+    )
+    for path in constants.RUBY_ANIMATION_IMAGES_PATHS
+] 
 
+class RubyMaker(Animatable):
+    def __init__(self, ruby_maker_state: state.rubymaker.RubyMaker) -> None:
+        super().__init__(ruby_maker_state, ruby_animation_images)
         self.rect = self.image.get_rect()
-        self.rect.center = (ruby_maker.x, ruby_maker.y)
+        self.rect.center = (ruby_maker_state.x, ruby_maker_state.y)
