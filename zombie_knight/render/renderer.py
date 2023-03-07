@@ -9,6 +9,7 @@ import render.portal
 from state.gamestate import GameState
 from render.rubymaker import RubyMaker
 from render.portal import GreenPortal
+from render.player import Player
 
 
 RenderFunc = Callable[[GameState], Tuple[pygame.Surface, pygame.Rect]]
@@ -40,12 +41,20 @@ class Renderer:
         self.background_rect = background_rect
 
     def get_blit_funcs(self) -> List[RenderFunc]:
-        return [self.ruby_maker]
+        return [
+            self.ruby_maker,
+            self.player
+        ]
     
     def ruby_maker(self, state: GameState) -> Tuple[pygame.Surface, pygame.Rect]:
         ruby_maker_sprite = RubyMaker(state.ruby_maker)
         
         return (ruby_maker_sprite.image, ruby_maker_sprite.rect)
+    
+    def player(self, state: GameState) -> Tuple[pygame.Surface, pygame.Rect]:
+        player_sprite = Player(state.player)
+        
+        return (player_sprite.image, player_sprite.rect)
     
     def render_portals(self, display: pygame.Surface, state: GameState) -> None:
         portals = state.portals

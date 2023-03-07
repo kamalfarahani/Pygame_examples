@@ -4,12 +4,15 @@ from typing import Callable, List
 import constants
 import state.tilemap
 from state.gamestate import GameState
-from state.player import Player
+from state.player import Player, AnimationState
 from state.rubymaker import RubyMaker
 from state.portal import GreenPortal, PurplePortal, BasePortal
+from state.general import Direction
 from render.renderer import Renderer
 from rules.rubymaker import RubyMakerAnimateRule
 from rules.portal import PortalsAnimateRule
+from rules.player import PlayerAnimationRule
+from rules.physics import GravityRule, AccelerationRule, VelocityRule
 
 
 Action = Callable[[], None]
@@ -73,7 +76,13 @@ class Board:
         self.state = GameState(
             player=Player(
                 lives=constants.INIT_PLAYER_LIVES,
-                score=0
+                score=0,
+                direction=Direction.RIGHT,
+                position=pygame.math.Vector2(100, 100),
+                velocity=pygame.math.Vector2(0, 0),
+                acceleration=pygame.math.Vector2(0, 0),
+                animation_index=0,
+                animation_state=AnimationState.IDLE
             ),
             tile_map=generate_tile_map(constants.TILE_MAP),
             ruby_maker=RubyMaker(
@@ -87,7 +96,11 @@ class Board:
     def setup_rules(self) -> None:
         self.rules = [
             RubyMakerAnimateRule(),
-            PortalsAnimateRule()
+            PortalsAnimateRule(),
+            PlayerAnimationRule(),
+            GravityRule(constants.GRAVITY),
+            AccelerationRule(),
+            VelocityRule()
         ]
     
     def setup_sounds(self) -> None:

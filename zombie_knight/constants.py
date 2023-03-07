@@ -40,8 +40,27 @@ PURPLE_PORTAL_ANIMATION_IMAGES_PATHS = [
     p for p in Path('./assets/images/portals/purple').iterdir()
 ]
 
+
+PLAYER_RUN_RIGHT_ANIMATION_PATHS = [
+    p for p in Path('./assets/images/player/run').iterdir()
+]
+
+PLAYER_IDLE_RIGHT_ANIMATION_PATHS = [
+    p for p in Path('./assets/images/player/idle').iterdir()
+]
+
+PLAYER_JUMP_RIGHT_ANIMATION_PATHS = [
+    p for p in Path('./assets/images/player/jump').iterdir()
+]
+
+PLAYER_ATTACK_RIGHT_ANIMATION_PATHS = [
+    p for p in Path('./assets/images/player/attack').iterdir()
+]
+
+PLAYER_SIZE = 64
 INIT_PLAYER_LIVES = 3
 
+GRAVITY = 0.5
 FPS = 60
 
 
