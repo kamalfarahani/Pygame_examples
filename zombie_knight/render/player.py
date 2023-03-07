@@ -75,4 +75,4 @@ class Player(Animatable):
         super().__init__(player_state, animation_images)
         
         self.rect = self.image.get_rect()
-        self.rect.center = player_state.position
+        self.rect.bottomleft = player_state.position

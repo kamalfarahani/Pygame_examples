@@ -26,7 +26,7 @@ class GravityRule(GameRule):
             return [self.apply_gravity(x) for x in entity]
         elif hasattr(entity, 'acceleration'):
             acc = entity.acceleration
-            new_acc = pygame.math.Vector2(acc[0], acc[1] + self.gravity_constant)
+            new_acc = pygame.math.Vector2(acc[0], self.gravity_constant)
             return entity._replace(
                 acceleration=new_acc
             )
