@@ -56,13 +56,29 @@ class AccelerationRule(GameRule):
 
 
 class VelocityRule(GameRule):
+    def __init__(self, max_window_width: int) -> None:
+        self.max_window_width = max_window_width
+
+    def update_x(self, x):
+        new_x = x
+        if x < 0:
+            new_x = self.max_window_width
+        elif x > self.max_window_width:
+            new_x = 0
+        
+        return new_x
+    
     def apply_velocity(self, entity: Union[Any, Accelerable, List]) -> Union[Any, Accelerable, List]:
         if isinstance(entity, List):
             return [self.apply_velocity(x) for x in entity]
         elif hasattr(entity, 'velocity') and hasattr(entity, 'position'):
             velocity = entity.velocity
             position = entity.position
-            new_position = position + velocity
+            new_position = pygame.math.Vector2(
+                self.update_x(position.x + velocity.x),
+                position.y + velocity.y
+            )
+            
             return entity._replace(
                 position=new_position
             )

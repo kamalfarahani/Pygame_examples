@@ -104,10 +104,9 @@ class Board:
             PlayerAnimationRule(),
             GravityRule(constants.GRAVITY),
             AccelerationRule(),
-            VelocityRule(),
-            PlatformCollideRule(player_tile_collide),
+            VelocityRule(max_window_width=constants.WINDOW_WIDTH),
+            PlatformCollideRule(get_collided_tiles=player_tile_collide),
             PlayerMoveRule(
-                max_window_width=constants.WINDOW_WIDTH,
                 horizontal_acceleration=constants.HORIZONTAL_ACCELERATION,
                 horizontal_friction=constants.HORIZONTAL_FRICTION
             ),
