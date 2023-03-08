@@ -8,11 +8,14 @@ from state.player import Player, AnimationState
 from state.rubymaker import RubyMaker
 from state.portal import GreenPortal, PurplePortal, BasePortal
 from state.general import Direction
-from render.renderer import Renderer
+from render.renderer import Renderer, player_tile_collide, player_portal_collide
 from rules.rubymaker import RubyMakerAnimateRule
 from rules.portal import PortalsAnimateRule
-from rules.player import PlayerAnimationRule
+from rules.player import PlayerAnimationRule, PlayerMoveRule, PlayerJumpRule
 from rules.physics import GravityRule, AccelerationRule, VelocityRule
+from rules.platform import PlatformCollideRule
+from rules.portal import PortalCollideRule
+from rules.bullet import BulletShootRule, BulletDestroyRule
 
 
 Action = Callable[[], None]
@@ -47,7 +50,7 @@ def generate_portals() -> List[BasePortal]:
 
     purple_portal = PurplePortal(
         x=100,
-        y=570,
+        y=630,
         animation_index=0,
         out_portal=green_portal
     )
@@ -90,7 +93,8 @@ class Board:
                 y=constants.RUBY_MAKER_TOP_MARGIN,
                 animation_index=0
             ),
-            portals=generate_portals()
+            portals=generate_portals(),
+            bullets=[]
         )
 
     def setup_rules(self) -> None:
@@ -100,7 +104,25 @@ class Board:
             PlayerAnimationRule(),
             GravityRule(constants.GRAVITY),
             AccelerationRule(),
-            VelocityRule()
+            VelocityRule(),
+            PlatformCollideRule(player_tile_collide),
+            PlayerMoveRule(
+                max_window_width=constants.WINDOW_WIDTH,
+                horizontal_acceleration=constants.HORIZONTAL_ACCELERATION,
+                horizontal_friction=constants.HORIZONTAL_FRICTION
+            ),
+            PlayerJumpRule(
+                jump_speed=-constants.JUMP_SPEED,
+                get_collided_tiles=player_tile_collide
+            ),
+            PortalCollideRule(
+                get_collided_portal=player_portal_collide
+            ),
+            BulletShootRule(
+                horizontal_velocity=constants.BULLET_SPEED,
+                range=constants.BULLET_RANGE
+            ),
+            BulletDestroyRule()
         ]
     
     def setup_sounds(self) -> None:

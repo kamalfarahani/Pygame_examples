@@ -7,6 +7,7 @@ class BasePortal:
     x: int
     y: int
     animation_index: int
+    out_portal: BasePortal
 
     def _replace(self, **kwargs):
         return replace(self, **kwargs)
